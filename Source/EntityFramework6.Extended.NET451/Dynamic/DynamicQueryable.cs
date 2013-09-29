@@ -285,8 +285,19 @@ namespace System.Linq.Dynamic
                 Type type;
                 if (!classes.TryGetValue(signature, out type))
                 {
-                    type = CreateDynamicClass(signature.properties);
-                    classes.Add(signature, type);
+                    LockCookie cookie = rwLock.UpgradeToWriterLock(Timeout.Infinite);
+                    try
+                    {
+                        if (!classes.TryGetValue(signature, out type))
+                        {
+                            type = CreateDynamicClass(signature.properties);
+                            classes.Add(signature, type);
+                        }
+                    }
+                    finally
+                    {
+                        rwLock.DowngradeFromWriterLock(ref cookie);
+                    }
                 }
                 return type;
             }
@@ -319,7 +330,7 @@ namespace System.Linq.Dynamic
                 finally
                 {
 #if ENABLE_LINQ_PARTIAL_TRUST
-                    PermissionSet.RevertAssert();
+                PermissionSet.RevertAssert();
 #endif
                 }
             }

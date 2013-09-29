@@ -2,9 +2,9 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>EntityFramework6.Extended</id>
-    <version>6.0.0-rc1</version>
+    <version>6.0.0-alpha1</version>
     <authors>LoreSoft, AdvancedREI</authors>
-    <owners>LoreSoft, AdvancedREI</owners>
+    <owners>AdvancedREI</owners>
     <licenseUrl>https://github.com/AdvancedREI/EntityFramework.Extended</licenseUrl>
     <projectUrl>https://github.com/AdvancedREI/EntityFramework.Extended</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -22,9 +22,9 @@
   </metadata>
   <files>
     <file src="readme.md" target="tools\readme.md" />
-    <file src="Build\Release\EF6\NET4\EntityFramework6.Extended.NET4.dll" target="lib\net40\EntityFramework6.Extended.NET4.dll" />
+    <!--<file src="Build\Release\EF6\NET4\EntityFramework6.Extended.NET4.dll" target="lib\net40\EntityFramework6.Extended.NET4.dll" />
     <file src="Build\Release\EF6\NET4\EntityFramework6.Extended.NET4.pdb" target="lib\net40\EntityFramework6.Extended.NET4.pdb" />
-    <file src="Build\Release\EF6\NET4\EntityFramework6.Extended.NET4.xml" target="lib\net40\EntityFramework6.Extended.NET4.xml" />
+    <file src="Build\Release\EF6\NET4\EntityFramework6.Extended.NET4.xml" target="lib\net40\EntityFramework6.Extended.NET4.xml" />-->
     <file src="Build\Release\EF6\NET45\EntityFramework6.Extended.NET45.dll" target="lib\net45\EntityFramework6.Extended.NET45.dll" />
     <file src="Build\Release\EF6\NET45\EntityFramework6.Extended.NET45.pdb" target="lib\net45\EntityFramework6.Extended.NET45.pdb" />
     <file src="Build\Release\EF6\NET45\EntityFramework6.Extended.NET45.xml" target="lib\net45\EntityFramework6.Extended.NET45.xml" />
@@ -32,7 +32,7 @@
     <file src="Build\Release\EF6\NET451\EntityFramework6.Extended.NET451.pdb" target="lib\net451\EntityFramework6.Extended.NET451.pdb" />
     <file src="Build\Release\EF6\NET451\EntityFramework6.Extended.NET451.xml" target="lib\net451\EntityFramework6.Extended.NET451.xml" />
     <file src="Source\SharedAssemblyInfo.cs" target="src" />
-    <file src="Source\SharedAssemblyInfo.EF5.cs" target="src" />
+    <!--<file src="Source\SharedAssemblyInfo.EF5.cs" target="src" />-->
     <file src="Source\SharedAssemblyInfo.EF6.cs" target="src" />
     <file src="Source\EntityFramework6.Extended.NET451\**\*.cs" target="src" />
   </files>
