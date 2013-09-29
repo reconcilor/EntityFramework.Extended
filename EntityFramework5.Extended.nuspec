@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>EntityFramework5.Extended</id>
+    <version>5.1.0.0</version>
+    <authors>LoreSoft, AdvancedREI</authors>
+    <owners>LoreSoft, AdvancedREI</owners>
+    <licenseUrl>https://github.com/AdvancedREI/EntityFramework.Extended</licenseUrl>
+    <projectUrl>https://github.com/AdvancedREI/EntityFramework.Extended</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A library that extends the functionality of Entity Framework 5 by adding batch update, future queries and audit logs.</description>
+    <summary>A library of extensions for version 5 of the Entity Framework.</summary>
+    <copyright>Copyright (C) 2012-2013, LoreSoft. Modified 2013 AdvancedREI.</copyright>
+    <language>en-US</language>
+    <tags>EntityFramework, EF, EF5</tags>
+    <dependencies>
+      <dependency id="EntityFramework" version="5.0.0" />
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.ComponentModel.DataAnnotations" targetFramework="" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="readme.md" target="tools\readme.md" />
+    <file src="Build\Release\EF5\NET4\EntityFramework5.Extended.NET4.dll" target="lib\net40\EntityFramework5.Extended.NET4.dll" />
+    <file src="Build\Release\EF5\NET4\EntityFramework5.Extended.NET4.pdb" target="lib\net40\EntityFramework5.Extended.NET4.pdb" />
+    <file src="Build\Release\EF5\NET4\EntityFramework5.Extended.NET4.xml" target="lib\net40\EntityFramework5.Extended.NET4.xml" />
+    <file src="Build\Release\EF5\NET45\EntityFramework5.Extended.NET45.dll" target="lib\net45\EntityFramework5.Extended.NET45.dll" />
+    <file src="Build\Release\EF5\NET45\EntityFramework5.Extended.NET45.pdb" target="lib\net45\EntityFramework5.Extended.NET45.pdb" />
+    <file src="Build\Release\EF5\NET45\EntityFramework5.Extended.NET45.xml" target="lib\net45\EntityFramework5.Extended.NET45.xml" />
+    <file src="Build\Release\EF5\NET451\EntityFramework5.Extended.NET451.dll" target="lib\net451\EntityFramework5.Extended.NET451.dll" />
+    <file src="Build\Release\EF5\NET451\EntityFramework5.Extended.NET451.pdb" target="lib\net451\EntityFramework5.Extended.NET451.pdb" />
+    <file src="Build\Release\EF5\NET451\EntityFramework6.Extended.NET451.xml" target="lib\net451\EntityFramework5.Extended.NET451.xml" />
+    <file src="Source\SharedAssemblyInfo.cs" target="src" />
+    <file src="Source\SharedAssemblyInfo.EF5.cs" target="src" />
+    <file src="Source\SharedAssemblyInfo.EF6.cs" target="src" />
+    <file src="Source\EntityFramework5.Extended.NET451\**\*.cs" target="src" />
+  </files>
+</package>

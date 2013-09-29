@@ -1,0 +1,294 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{004DAD7B-8449-4878-8F78-6E9E46A984FE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EntityFramework6.Extended.NET45</RootNamespace>
+    <AssemblyName>EntityFramework6.Extended.NET45</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;net45;EF6</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\Build\Release\EF6\NET45\</OutputPath>
+    <DefineConstants>TRACE;net45;EF6</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\Build\Release\EF6\NET45\EntityFramework6.Extended.NET45.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.0.0-rc1\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.0.0-rc1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Audit\AlwaysAuditAttribute.cs">
+      <Link>Audit\AlwaysAuditAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Audit\AuditAction.cs">
+      <Link>Audit\AuditAction.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Audit\AuditAttribute.cs">
+      <Link>Audit\AuditAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Audit\AuditConfiguration.cs">
+      <Link>Audit\AuditConfiguration.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Audit\AuditEntity.cs">
+      <Link>Audit\AuditEntity.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Audit\AuditEntryState.cs">
+      <Link>Audit\AuditEntryState.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Audit\AuditKey.cs">
+      <Link>Audit\AuditKey.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Audit\AuditKeyCollection.cs">
+      <Link>Audit\AuditKeyCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Audit\AuditLog.cs">
+      <Link>Audit\AuditLog.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Audit\AuditLogger.cs">
+      <Link>Audit\AuditLogger.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Audit\AuditProperty.cs">
+      <Link>Audit\AuditProperty.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Audit\AuditPropertyCollection.cs">
+      <Link>Audit\AuditPropertyCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Audit\AuditPropertyFormatAttribute.cs">
+      <Link>Audit\AuditPropertyFormatAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Audit\NotAuditedAttribute.cs">
+      <Link>Audit\NotAuditedAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Batch\IBatchRunner.cs">
+      <Link>Batch\IBatchRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Batch\SqlServerBatchRunner.cs">
+      <Link>Batch\SqlServerBatchRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Caching\CacheExpirationMode.cs">
+      <Link>Caching\CacheExpirationMode.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Caching\CacheKey.cs">
+      <Link>Caching\CacheKey.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Caching\CacheManager.cs">
+      <Link>Caching\CacheManager.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Caching\CachePolicy.cs">
+      <Link>Caching\CachePolicy.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Caching\CacheTag.cs">
+      <Link>Caching\CacheTag.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Caching\ICacheProvider.cs">
+      <Link>Caching\ICacheProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Caching\MemoryCacheProvider.cs">
+      <Link>Caching\MemoryCacheProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Caching\Query\Evaluator.cs">
+      <Link>Caching\Query\Evaluator.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Caching\Query\LocalCollectionExpander.cs">
+      <Link>Caching\Query\LocalCollectionExpander.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Caching\Query\QueryCache.cs">
+      <Link>Caching\Query\QueryCache.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Caching\Query\Utility.cs">
+      <Link>Caching\Query\Utility.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Container.cs">
+      <Link>Container.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Dynamic\DynamicQueryable.cs">
+      <Link>Dynamic\DynamicQueryable.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Extensions\AuditExtensions.cs">
+      <Link>Extensions\AuditExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Extensions\BatchExtensions.cs">
+      <Link>Extensions\BatchExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Extensions\CacheExtensions.cs">
+      <Link>Extensions\CacheExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Extensions\DataRecordExtensions.cs">
+      <Link>Extensions\DataRecordExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Extensions\ExpressionExtensions.cs">
+      <Link>Extensions\ExpressionExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Extensions\FutureExtensions.cs">
+      <Link>Extensions\FutureExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Extensions\ObjectContextExtensions.cs">
+      <Link>Extensions\ObjectContextExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Extensions\ObjectQueryExtensions.cs">
+      <Link>Extensions\ObjectQueryExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Future\FutureContext.cs">
+      <Link>Future\FutureContext.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Future\FutureCount.cs">
+      <Link>Future\FutureCount.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Future\FutureException.cs">
+      <Link>Future\FutureException.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Future\FuturePlan.cs">
+      <Link>Future\FuturePlan.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Future\FutureQuery.cs">
+      <Link>Future\FutureQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Future\FutureQueryBase.cs">
+      <Link>Future\FutureQueryBase.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Future\FutureRunner.cs">
+      <Link>Future\FutureRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Future\FutureStore.cs">
+      <Link>Future\FutureStore.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Future\FutureValue.cs">
+      <Link>Future\FutureValue.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Future\IFutureContext.cs">
+      <Link>Future\IFutureContext.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Future\IFutureQuery.cs">
+      <Link>Future\IFutureQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Future\IFutureRunner.cs">
+      <Link>Future\IFutureRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\IContainer.cs">
+      <Link>IContainer.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Locator.cs">
+      <Link>Locator.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Mapping\EntityMap.cs">
+      <Link>Mapping\EntityMap.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Mapping\IMappingProvider.cs">
+      <Link>Mapping\IMappingProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Mapping\MappingResolver.cs">
+      <Link>Mapping\MappingResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Mapping\PropertyMap.cs">
+      <Link>Mapping\PropertyMap.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Mapping\ReflectionMappingProvider.cs">
+      <Link>Mapping\ReflectionMappingProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Reflection\DelegateFactory.cs">
+      <Link>Reflection\DelegateFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Reflection\DynamicProxy.cs">
+      <Link>Reflection\DynamicProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Reflection\FieldAccessor.cs">
+      <Link>Reflection\FieldAccessor.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Reflection\ILGeneratorExtensions.cs">
+      <Link>Reflection\ILGeneratorExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Reflection\IMemberAccessor.cs">
+      <Link>Reflection\IMemberAccessor.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Reflection\IMemberInfo.cs">
+      <Link>Reflection\IMemberInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Reflection\IMethodAccessor.cs">
+      <Link>Reflection\IMethodAccessor.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Reflection\LateBinder.cs">
+      <Link>Reflection\LateBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Reflection\MemberAccessor.cs">
+      <Link>Reflection\MemberAccessor.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Reflection\MethodAccessor.cs">
+      <Link>Reflection\MethodAccessor.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Reflection\ObjectCloner.cs">
+      <Link>Reflection\ObjectCloner.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Reflection\ObjectCopier.cs">
+      <Link>Reflection\ObjectCopier.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Reflection\PropertyAccessor.cs">
+      <Link>Reflection\PropertyAccessor.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Reflection\ReflectionHelper.cs">
+      <Link>Reflection\ReflectionHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\EntityFramework6.Extended.NET451\Reflection\TypeAccessor.cs">
+      <Link>Reflection\TypeAccessor.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedAssemblyInfo.EF6.cs">
+      <Link>SharedAssemblyInfo.EF6.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="..\EntityFramework6.Extended.NET451\Audit\Audit.xsd">
+      <Link>Audit\Audit.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
