@@ -273,7 +273,8 @@ namespace EntityFramework.Batch
 
                             var parameter = updateCommand.CreateParameter();
                             parameter.ParameterName = parameterName;
-                            parameter.Value = objectParameter.Value;
+                            // RWM: Ensure null values are replaced with DBNull.Value
+                            parameter.Value = objectParameter.Value ?? DBNull.Value;
                             updateCommand.Parameters.Add(parameter);
 
                             value = value.Replace(objectParameter.Name, parameterName);
@@ -370,8 +371,8 @@ namespace EntityFramework.Batch
             {
                 var parameter = command.CreateParameter();
                 parameter.ParameterName = objectParameter.Name;
-                parameter.Value = objectParameter.Value;
-
+                //ensure null values are replaced with DBNull.Value  
+                parameter.Value = objectParameter.Value ?? DBNull.Value;  
                 command.Parameters.Add(parameter);
             }
 

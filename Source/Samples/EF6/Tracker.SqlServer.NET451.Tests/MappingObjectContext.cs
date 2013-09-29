@@ -6,7 +6,13 @@ using Tracker.SqlServer.CodeFirst.Entities;
 using Tracker.SqlServer.Entities;
 using Task = Tracker.SqlServer.Entities.Task;
 
+#if NET4
+namespace Tracker.SqlServer.EF6.NET4.Tests
+#elif NET45
+namespace Tracker.SqlServer.EF6.NET45.Tests
+#elif NET451
 namespace Tracker.SqlServer.EF6.NET451.Tests
+#endif
 {
     /// <summary>
     /// Summary description for MappingObjectContext

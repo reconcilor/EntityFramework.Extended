@@ -6,7 +6,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Tracker.SqlServer.CodeFirst;
 using Tracker.SqlServer.CodeFirst.Entities;
 
+#if NET4
+namespace Tracker.SqlServer.EF6.NET4.Tests
+#elif NET45
+namespace Tracker.SqlServer.EF6.NET45.Tests
+#elif NET451
 namespace Tracker.SqlServer.EF6.NET451.Tests
+#endif
 {
     [TestClass]
     public class AuditTest

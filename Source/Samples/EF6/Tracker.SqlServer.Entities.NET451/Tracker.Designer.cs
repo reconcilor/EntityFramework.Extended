@@ -9,7 +9,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Data.Entity.Core.Objects.DataClasses;
 using System.Data.Entity.Core.EntityClient;
 using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Core.Objects.DataClasses;
@@ -17,7 +16,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
-[assembly: EdmSchemaAttribute()]
+[assembly: EdmSchema()]
 #region EDM Relationship Metadata
 
 [assembly: EdmRelationshipAttribute("TrackerModel", "FK_Audit_Task", "Task", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Tracker.SqlServer.Entities.Task), "Audit", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Tracker.SqlServer.Entities.Audit), true)]
@@ -262,7 +261,7 @@ namespace Tracker.SqlServer.Entities
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
-    [EdmEntityType(NamespaceName="TrackerModel", Name="Audit")]
+    [EdmEntityTypeAttribute(NamespaceName="TrackerModel", Name="Audit")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
     public partial class Audit : EntityObject

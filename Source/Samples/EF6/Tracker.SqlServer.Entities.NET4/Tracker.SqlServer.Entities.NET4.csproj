@@ -70,12 +70,6 @@
     </EntityDeploy>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\EntityFramework6.Extended.NET4\EntityFramework6.Extended.NET4.csproj">
-      <Project>{c2ecb29e-0970-4592-bb4c-b7d08b59bc57}</Project>
-      <Name>EntityFramework6.Extended.NET4</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

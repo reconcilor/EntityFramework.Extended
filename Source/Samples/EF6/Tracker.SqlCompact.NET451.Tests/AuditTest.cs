@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Data.Entity.Infrastructure;
-using System.Data.Objects;
 using System.Linq;
 using EntityFramework.Audit;
 using EntityFramework.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Tracker.SqlCompact.Entities;
-using Tracker.SqlServer.CodeFirst;
-using Tracker.SqlServer.CodeFirst.Entities;
+
 
 namespace Tracker.SqlServer.Test
 {
@@ -32,7 +30,7 @@ namespace Tracker.SqlServer.Test
             auditConfiguration.IsAuditable<Status>()
               .DisplayMember(t => t.Name);
 
-            var db = new TrackerContext();
+            var db = new TrackerEntities();
             var audit = db.BeginAudit();
 
             var user = db.Users.Find(1);
@@ -69,7 +67,7 @@ namespace Tracker.SqlServer.Test
             AuditConfiguration.Default.IsAuditable<Task>();
             AuditConfiguration.Default.IsAuditable<User>();
 
-            var db = new TrackerContext();
+            var db = new TrackerEntities();
             var audit = db.BeginAudit();
 
             var task = db.Tasks.Find(1);
@@ -95,7 +93,7 @@ namespace Tracker.SqlServer.Test
             AuditConfiguration.Default.IsAuditable<Task>();
             AuditConfiguration.Default.IsAuditable<User>();
 
-            var db = new TrackerContext();
+            var db = new TrackerEntities();
             var audit = db.BeginAudit();
 
             var user = new User();
@@ -132,7 +130,7 @@ namespace Tracker.SqlServer.Test
             AuditConfiguration.Default.IsAuditable<Task>();
             AuditConfiguration.Default.IsAuditable<User>();
 
-            var db = new TrackerContext();
+            var db = new TrackerEntities();
             var audit = db.BeginAudit();
 
             var user = new User();

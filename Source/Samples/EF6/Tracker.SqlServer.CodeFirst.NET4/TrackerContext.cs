@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using Tracker.SqlServer.CodeFirst.Entities;
-using Tracker.SqlServer.CodeFirst.Mapping;
+﻿using System.Data.Entity;
 
 namespace Tracker.SqlServer.CodeFirst
 {
