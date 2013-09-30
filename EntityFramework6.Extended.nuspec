@@ -22,9 +22,9 @@
   </metadata>
   <files>
     <file src="readme.md" target="tools\readme.md" />
-    <!--<file src="Build\Release\EF6\NET4\EntityFramework6.Extended.NET4.dll" target="lib\net40\EntityFramework6.Extended.NET4.dll" />
+    <file src="Build\Release\EF6\NET4\EntityFramework6.Extended.NET4.dll" target="lib\net40\EntityFramework6.Extended.NET4.dll" />
     <file src="Build\Release\EF6\NET4\EntityFramework6.Extended.NET4.pdb" target="lib\net40\EntityFramework6.Extended.NET4.pdb" />
-    <file src="Build\Release\EF6\NET4\EntityFramework6.Extended.NET4.xml" target="lib\net40\EntityFramework6.Extended.NET4.xml" />-->
+    <file src="Build\Release\EF6\NET4\EntityFramework6.Extended.NET4.xml" target="lib\net40\EntityFramework6.Extended.NET4.xml" />
     <file src="Build\Release\EF6\NET45\EntityFramework6.Extended.NET45.dll" target="lib\net45\EntityFramework6.Extended.NET45.dll" />
     <file src="Build\Release\EF6\NET45\EntityFramework6.Extended.NET45.pdb" target="lib\net45\EntityFramework6.Extended.NET45.pdb" />
     <file src="Build\Release\EF6\NET45\EntityFramework6.Extended.NET45.xml" target="lib\net45\EntityFramework6.Extended.NET45.xml" />
