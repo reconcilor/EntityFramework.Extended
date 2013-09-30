@@ -38,7 +38,7 @@ namespace Tracker.SqlServer.CodeFirst
             : base(existingConnection, model, contextOwnsConnection)
         { }
 
-        public TrackerContext(System.Data.Objects.ObjectContext objectContext, bool dbContextOwnsObjectContext)
+        public TrackerContext(System.Data.Entity.Core.Objects.ObjectContext objectContext, bool dbContextOwnsObjectContext)
             : base(objectContext, dbContextOwnsObjectContext)
         { }
 
