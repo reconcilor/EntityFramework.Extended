@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using EntityFramework.Extensions;
 using EntityFramework.Future;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Tracker.SqlServer.Entities;
 
 namespace Tracker.SqlServer.Test
 {
-    [TestClass]
+    [TestFixture]
     public class FutureObjectContext
     {
 
-        [TestMethod]
+        [Test]
         public void PageTest()
         {
             var db = new TrackerEntities();
@@ -34,7 +34,7 @@ namespace Tracker.SqlServer.Test
             Assert.IsNotNull(tasks);
         }
 
-        [TestMethod]
+        [Test]
         public void SimpleTest()
         {
             var db = new TrackerEntities();
@@ -43,7 +43,7 @@ namespace Tracker.SqlServer.Test
 
             string emailDomain = "@battlestar.com";
             var q1 = db.Users
-                .Where(p => p.Email.EndsWith(emailDomain))
+                .Where(p => p.EmailAddress.EndsWith(emailDomain))
                 .Future();
 
             string search = "Earth";
@@ -69,7 +69,7 @@ namespace Tracker.SqlServer.Test
 
         }
 
-        [TestMethod]
+        [Test]
         public void FutureCountTest()
         {
             var db = new TrackerEntities();
@@ -78,7 +78,7 @@ namespace Tracker.SqlServer.Test
 
             string emailDomain = "@battlestar.com";
             var q1 = db.Users
-                .Where(p => p.Email.EndsWith(emailDomain))
+                .Where(p => p.EmailAddress.EndsWith(emailDomain))
                 .Future();
 
             string search = "Earth";
@@ -103,7 +103,7 @@ namespace Tracker.SqlServer.Test
             Assert.AreNotEqual(count, 0);
         }
 
-        [TestMethod]
+        [Test]
         public void FutureCountReverseTest()
         {
             var db = new TrackerEntities();
@@ -112,7 +112,7 @@ namespace Tracker.SqlServer.Test
 
             string emailDomain = "@battlestar.com";
             var q1 = db.Users
-                .Where(p => p.Email.EndsWith(emailDomain))
+                .Where(p => p.EmailAddress.EndsWith(emailDomain))
                 .Future();
 
             string search = "Earth";
@@ -138,7 +138,7 @@ namespace Tracker.SqlServer.Test
             Assert.IsNotNull(users);
         }
 
-        [TestMethod]
+        [Test]
         public void FutureValueTest()
         {
             var db = new TrackerEntities();
@@ -146,7 +146,7 @@ namespace Tracker.SqlServer.Test
             // build up queries
             string emailDomain = "@battlestar.com";
             var q1 = db.Users
-                .Where(p => p.Email.EndsWith(emailDomain))
+                .Where(p => p.EmailAddress.EndsWith(emailDomain))
                 .FutureFirstOrDefault();
 
             string search = "Earth";
@@ -179,7 +179,7 @@ namespace Tracker.SqlServer.Test
             Assert.IsNotNull(tasks);
         }
 
-        [TestMethod]
+        [Test]
         public void FutureValueReverseTest()
         {
             var db = new TrackerEntities();
@@ -187,7 +187,7 @@ namespace Tracker.SqlServer.Test
 
             string emailDomain = "@battlestar.com";
             var q1 = db.Users
-                .Where(p => p.Email.EndsWith(emailDomain))
+                .Where(p => p.EmailAddress.EndsWith(emailDomain))
                 .FutureFirstOrDefault();
 
             string search = "Earth";

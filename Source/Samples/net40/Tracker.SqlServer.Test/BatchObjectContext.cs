@@ -1,34 +1,33 @@
 ﻿using System;
-using System.Data.Objects;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using EntityFramework.Extensions;
 using Tracker.SqlServer.Entities;
 using System.Linq.Dynamic;
 
 namespace Tracker.SqlServer.Test
 {
-    [TestClass]
+    [TestFixture]
     public class BatchObjectContext
     {
-        [TestMethod]
+        [Test]
         public void Delete()
         {
-            var db = new TrackerEntities();
-            string emailDomain = "@test.com";
-            int count = db.Users.Delete(u => u.Email.EndsWith(emailDomain));
+            //var db = new TrackerEntities();
+            //string emailDomain = "@test.com";
+            //int count = db.Users.Delete(u => u.Email.EndsWith(emailDomain));
         }
 
-        [TestMethod]
+        [Test]
         public void Update()
         {
-            var db = new TrackerEntities();
-            string emailDomain = "@test.com";
-            int count = db.Users.Update(
-                u => u.Email.EndsWith(emailDomain),
-                u => new User { IsApproved = false, LastActivityDate = DateTime.Now });
+            //var db = new TrackerEntities();
+            //string emailDomain = "@test.com";
+            //int count = db.Users.Update(
+            //    u => u.Email.EndsWith(emailDomain),
+            //    u => new User { IsApproved = false, LastActivityDate = DateTime.Now });
         }
     }
 }

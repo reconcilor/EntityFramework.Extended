@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Data.Entity.Infrastructure;
-using System.Data.Objects;
 using System.Linq;
 using EntityFramework.Audit;
 using EntityFramework.Extensions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Tracker.SqlServer.CodeFirst;
 using Tracker.SqlServer.CodeFirst.Entities;
 
 namespace Tracker.SqlServer.Test
 {
-    [TestClass]
+    [TestFixture]
     public class AuditTest
     {
-        [TestMethod]
+        [Test]
         public void CreateLog()
         {
             var auditConfiguration = AuditConfiguration.Default;
@@ -59,7 +58,7 @@ namespace Tracker.SqlServer.Test
             Assert.IsNotNull(xml);
         }
 
-        [TestMethod]
+        [Test]
         public void CreateLog2()
         {
             AuditConfiguration.Default.IncludeRelationships = true;
@@ -85,7 +84,7 @@ namespace Tracker.SqlServer.Test
             Assert.IsNotNull(xml);
         }
 
-        [TestMethod]
+        [Test]
         public void CreateLog3()
         {
             AuditConfiguration.Default.IncludeRelationships = true;
@@ -122,7 +121,7 @@ namespace Tracker.SqlServer.Test
             Assert.IsNotNull(afterXml);
         }
 
-        [TestMethod]
+        [Test]
         public void Refresh()
         {
             AuditConfiguration.Default.IncludeRelationships = true;
@@ -165,7 +164,7 @@ namespace Tracker.SqlServer.Test
 
         }
 
-        [TestMethod]
+        [Test]
         public void Delete()
         {
             AuditConfiguration.Default.IncludeRelationships = true;
@@ -220,7 +219,7 @@ namespace Tracker.SqlServer.Test
             Console.WriteLine(deleteXml);
         }
 
-        [TestMethod]
+        [Test]
         public void Update()
         {
             AuditConfiguration.Default.IncludeRelationships = true;

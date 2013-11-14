@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.Entity;
+using System.Data.Entity.Core.Metadata.Edm;
+using System.Data.Entity.Core.Objects;
+using System.Data.Entity.Core.Objects.DataClasses;
 using System.Data.Entity.Infrastructure;
-using System.Data.Metadata.Edm;
-using System.Data.Objects;
-using System.Data.Objects.DataClasses;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -328,7 +328,7 @@ namespace EntityFramework.Audit
 
             foreach (NavigationProperty navigationProperty in properties)
             {
-                if (navigationProperty.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many 
+                if (navigationProperty.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many
                     || navigationProperty.FromEndMember.RelationshipMultiplicity != RelationshipMultiplicity.Many)
                     continue;
 
@@ -540,7 +540,7 @@ namespace EntityFramework.Audit
             }
 
             var q = state.ObjectContext.CreateQuery<object>(
-                sql.ToString(), 
+                sql.ToString(),
                 parameters.ToArray());
 
             return q.FirstOrDefault();

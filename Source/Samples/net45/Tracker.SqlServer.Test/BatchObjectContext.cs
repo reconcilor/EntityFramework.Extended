@@ -1,27 +1,23 @@
 ﻿using System;
-using System.Data.Objects;
-using System.Text;
-using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using EntityFramework.Extensions;
 using Tracker.SqlServer.Entities;
-using System.Linq.Dynamic;
 
 namespace Tracker.SqlServer.Test
 {
-    [TestClass]
+    [TestFixture]
     public class BatchObjectContext
     {
-        [TestMethod]
+        [Test]
         public void Delete()
         {
             var db = new TrackerEntities();
             string emailDomain = "@test.com";
-            int count = db.Users.Delete(u => u.Email.EndsWith(emailDomain));
+            int count = db.Users.Delete(u => u.EmailAddress.EndsWith(emailDomain));
         }
 
-        [TestMethod]
+        [Test]
         public void DeleteWithExpressionContainingNullParameter()
         {
             // This test verifies that the delete is processed correctly when the where expression uses a parameter with a null parameter
@@ -29,10 +25,10 @@ namespace Tracker.SqlServer.Test
             string emailDomain = "@test.com";
             string optionalComparisonString = null;
 
-            int count = db.Users.Delete(u => u.Email.EndsWith(emailDomain) && (string.IsNullOrEmpty(optionalComparisonString) || u.AvatarType == optionalComparisonString));
+            int count = db.Users.Delete(u => u.EmailAddress.EndsWith(emailDomain) && (string.IsNullOrEmpty(optionalComparisonString) || u.AvatarType == optionalComparisonString));
         }
 
-        [TestMethod]
+        [Test]
         public void DeleteWhereWithExpressionContainingNullParameter()
         {
             // This test verifies that the delete is processed correctly when the where expression uses a parameter with a null parameter
@@ -41,21 +37,21 @@ namespace Tracker.SqlServer.Test
             string optionalComparisonString = null; 
             
             int count = db.Users
-                .Where(u => (string.IsNullOrEmpty(optionalComparisonString) || u.AvatarType == optionalComparisonString) && u.Email.EndsWith(emailDomain))
+                .Where(u => (string.IsNullOrEmpty(optionalComparisonString) || u.AvatarType == optionalComparisonString) && u.EmailAddress.EndsWith(emailDomain))
                 .Delete();
         }
 
-        [TestMethod]
+        [Test]
         public void Update()
         {
             var db = new TrackerEntities();
             string emailDomain = "@test.com";
             int count = db.Users.Update(
-                u => u.Email.EndsWith(emailDomain),
+                u => u.EmailAddress.EndsWith(emailDomain),
                 u => new User { IsApproved = false, LastActivityDate = DateTime.Now });
         }
 
-        [TestMethod]
+        [Test]
         public void UpdateWithExpressionContainingNullParameter()
         {
             // This test verifies that the update is interpreted correctly when the where expression uses a parameter with a null parameter
@@ -64,7 +60,7 @@ namespace Tracker.SqlServer.Test
             string optionalComparisonString = null;
 
             int count = db.Users.Update(
-                u => u.Email.EndsWith(emailDomain) && (string.IsNullOrEmpty(optionalComparisonString) || u.AvatarType == optionalComparisonString),
+                u => u.EmailAddress.EndsWith(emailDomain) && (string.IsNullOrEmpty(optionalComparisonString) || u.AvatarType == optionalComparisonString),
                 u => new User { IsApproved = false, LastActivityDate = DateTime.Now });
         }
     }
