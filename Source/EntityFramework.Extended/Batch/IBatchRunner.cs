@@ -46,6 +46,19 @@ namespace EntityFramework.Batch
             where TEntity : class;
 
         /// <summary>
+        /// Create and runs a batch insert statement.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity to be inserted</typeparam>
+        /// <param name="objectContext">The <see cref="ObjectContext"/> to get connection and metadata information from.</param>
+        /// <param name="entityMap">The <see cref="EntityMap"/> for <typeparamref name="TEntity"/>.</param>
+        /// <param name="records">Collection of <typeparamref name="TEntity"/> to be inserted</param>
+        /// <param name="bulkInsertBatchSize">The number of records to insert in a single statement</param>
+        /// <returns>The number of rows inserted.</returns>
+        int BulkInsert<TEntity>(ObjectContext objectContext, EntityMap entityMap, IEnumerable<TEntity> records, int bulkInsertBatchSize)
+            where TEntity : class;
+        
+
+        /// <summary>
         /// Create and runs a batch insert from statement.
         /// </summary>
         /// <typeparam name="TSource">The type of the source entity.</typeparam>

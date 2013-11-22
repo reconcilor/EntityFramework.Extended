@@ -10,6 +10,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Transactions;
 using EntityFramework.Extensions;
 using EntityFramework.Mapping;
 using EntityFramework.Reflection;
@@ -21,6 +22,9 @@ namespace EntityFramework.Batch
     /// </summary>
     public class SqlServerBatchRunner : IBatchRunner
     {
+        // The default batch insert command size
+        public const int DefaultBatchInsertCommandBatchSize = 40;
+
         /// <summary>
         /// Create and run a batch delete statement.
         /// </summary>
@@ -84,7 +88,7 @@ namespace EntityFramework.Batch
                     if (wroteKey)
                         sqlBuilder.Append(" AND ");
 
-                    sqlBuilder.AppendFormat("j0.[{0}] = j1.[{0}]", keyMap.ColumnName);
+                    sqlBuilder.AppendFormat("j0.{0} = j1.{0}", keyMap.ColumnName);
                     wroteKey = true;
                 }
                 sqlBuilder.Append(")");
@@ -225,11 +229,11 @@ namespace EntityFramework.Batch
                             parameter.Value = value;
                             updateCommand.Parameters.Add(parameter);
 
-                            sqlBuilder.AppendFormat("[{0}] = @{1}", columnName, parameterName);
+                            sqlBuilder.AppendFormat("{0} = @{1}", columnName, parameterName);
                         }
                         else
                         {
-                            sqlBuilder.AppendFormat("[{0}] = NULL", columnName);
+                            sqlBuilder.AppendFormat("{0} = NULL", columnName);
                         }
                     }
                     else
@@ -276,7 +280,7 @@ namespace EntityFramework.Batch
                             
                             value = value.Replace(objectParameter.Name, parameterName);
                         }
-                        sqlBuilder.AppendFormat("[{0}] = {1}", columnName, value);
+                        sqlBuilder.AppendFormat("{0} = {1}", columnName, value);
                     }
                     wroteSet = true;
                 }
@@ -293,7 +297,7 @@ namespace EntityFramework.Batch
                     if (wroteKey)
                         sqlBuilder.Append(" AND ");
 
-                    sqlBuilder.AppendFormat("j0.[{0}] = j1.[{0}]", keyMap.ColumnName);
+                    sqlBuilder.AppendFormat("j0.{0} = j1.{0}", keyMap.ColumnName);
                     wroteKey = true;
                 }
                 sqlBuilder.Append(")");
@@ -331,6 +335,25 @@ namespace EntityFramework.Batch
         public int BulkInsert<TEntity>(ObjectContext objectContext, EntityMap entityMap, IEnumerable<TEntity> records)
             where TEntity : class
         {
+            return BulkInsert<TEntity>(objectContext, entityMap, records, DefaultBatchInsertCommandBatchSize);
+        }
+
+        /// <summary>
+        /// Create and runs a batch insert statement.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity to be inserted</typeparam>
+        /// <param name="objectContext">The <see cref="ObjectContext"/> to get connection and metadata information from.</param>
+        /// <param name="entityMap">The <see cref="EntityMap"/> for <typeparamref name="TEntity"/>.</param>
+        /// <param name="records">Collection of <typeparamref name="TEntity"/> to be inserted</param>
+        /// <param name="bulkInsertBatchSize">The number of records to insert in a single statement</param>
+        /// <returns>The number of rows inserted.</returns>
+        public int BulkInsert<TEntity>(ObjectContext objectContext, EntityMap entityMap, IEnumerable<TEntity> records, int bulkInsertBatchSize)
+            where TEntity : class
+        {
+            if (bulkInsertBatchSize <= 0)
+            {
+                throw new ArgumentException("The bulkInsertBatchSize parameter must be a positive integer", "bulkInsertBatchSize");
+            }
             DbConnection insertConnection = null;
             DbTransaction insertTransaction = null;
             DbCommand insertCommand = null;
@@ -363,94 +386,122 @@ namespace EntityFramework.Batch
                     insertCommand.CommandTimeout = objectContext.CommandTimeout.Value;
 
                 List<PropertyMap> propertyMaps = entityMap.PropertyMaps;
+                // Generate the output clause to ensure the results of inserted keys are returned
+                List<PropertyMap> keyMaps = entityMap.KeyMaps;
+                
+                List<PropertyMap> nonKeyProperties = new List<PropertyMap>();
+
+                // build a list of non-key properties
+                propertyMaps.ForEach(p =>
+                {
+                    if (!keyMaps.Any(k => k.PropertyName == p.PropertyName))
+                    {
+                        nonKeyProperties.Add(p);
+                    }
+                });
                 
                 var insertLine = new StringBuilder();
                 insertLine.Append("INSERT INTO ");
                 insertLine.AppendLine(entityMap.TableName);
                 insertLine.Append(" (");
-                insertLine.Append(String.Join(", ", propertyMaps
+                insertLine.Append(String.Join(", ", nonKeyProperties
                     .Select(x => x.ColumnName)));
                 insertLine.AppendLine(") ");
 
-                // Generate the output clause to ensuer the results of inserted keys are returned
-                //List<PropertyMap> keyMaps = entityMap.KeyMaps;
-                //if (keyMaps != null && keyMaps.Count > 0)
-                //{
-                //    insertLine.AppendLine(" OUTPUT  ");
+                
+                if (keyMaps != null && keyMaps.Count > 0)
+                {
+                    insertLine.AppendLine(" OUTPUT  ");
                     
-                //    int index = 0;
-                //    foreach (PropertyMap keyMap in keyMaps)
-                //    {
-                //        if (index > 0)
-                //        {
-                //            insertLine.AppendLine(", ");
-                //        }
-                //        insertLine.AppendLine("Inserted.[");
-                //        insertLine.AppendLine(keyMap.ColumnName);
-                //        insertLine.AppendLine("] ");
-                //        index++;
-                //    }
-                //}
+                    int index = 0;
+                    foreach (PropertyMap keyMap in keyMaps)
+                    {
+                        if (index > 0)
+                        {
+                            insertLine.AppendLine(", ");
+                        }
+                        insertLine.AppendLine("Inserted.");
+                        insertLine.AppendLine(keyMap.ColumnName);
+                        insertLine.AppendLine(" ");
+                        index++;
+                    }
+                }
                 
                 insertLine.AppendLine(" VALUES ");
                 var rows = new StringBuilder();
                 List<DbParameter> parameters = new List<DbParameter>();
-                Type entityType = records.FirstOrDefault().GetType();
-                PropertyInfo[] properties = entityType.GetProperties();
-                int i = 0;
+                Type entityType = null;
+                TEntity firstEntity = records.FirstOrDefault();
+                if (firstEntity != null)
+                {
+                    entityType = firstEntity.GetType();
+                }
+
                 int result = 0;
-                int maxRows = 2000 / propertyMaps.Count();
 
-                //List<TEntity> recordsInInsertBatch = new List<TEntity>();
-
-                foreach (var record in records)
+                if (entityType != null)
                 {
-                    //recordsInInsertBatch.Add(record);
+                    PropertyInfo[] properties = entityType.GetProperties();
+                    int i = 0;
 
-                    int propCount = parameters.Count();
-                    if (propCount > 0)
+                    List<TEntity> recordsInInsertBatch = new List<TEntity>();
+
+                    foreach (var record in records)
                     {
-                        rows.AppendLine(",");
-                    }
-                    rows.Append("(");
-                    rows.Append(String.Join(", ", propertyMaps
-                        .Select(x => String.Format("@{0}", propCount++))));
-                    rows.Append(")");
-                    foreach (PropertyMap propMap in propertyMaps)
-                    {
-                        object value = null;
-                        DbParameter dbParam = insertCommand.CreateParameter();
-                        dbParam.ParameterName = String.Format("@{0}", parameters.Count);
-                        if (propMap is ConstantPropertyMap)
+                        recordsInInsertBatch.Add(record);
+
+                        int propCount = parameters.Count();
+                        if (propCount > 0)
                         {
-                            value = ((ConstantPropertyMap)propMap).Value;
+                            rows.AppendLine(",");
                         }
-                        else
+                        rows.Append("(");
+                        rows.Append(String.Join(", ", nonKeyProperties
+                            .Select(x => String.Format("@{0}", propCount++))));
+                        rows.Append(")");
+                        foreach (PropertyMap propMap in nonKeyProperties)
                         {
-                            PropertyInfo prop = properties.SingleOrDefault(x => x.Name == propMap.PropertyName);
-                            if (prop != null)
+                            object value = null;
+                            DbParameter dbParam = insertCommand.CreateParameter();
+                            dbParam.ParameterName = String.Format("@{0}", parameters.Count);
+                            if (propMap is ConstantPropertyMap)
                             {
-                                value = prop.GetValue(record, new object[0]);
-                                dbParam.DbType = DbTypeConversion.ToDbType(prop.PropertyType);
+                                value = ((ConstantPropertyMap)propMap).Value;
                             }
+                            else
+                            {
+                                PropertyInfo prop = properties.SingleOrDefault(x => x.Name == propMap.PropertyName);
+                                if (prop != null)
+                                {
+                                    value = prop.GetValue(record, new object[0]);
+                                    dbParam.DbType = DbTypeConversion.ToDbType(prop.PropertyType);
+                                }
+                            }
+                            dbParam.Value = value ?? DBNull.Value;
+                            parameters.Add(dbParam);
                         }
-                        dbParam.Value = value ?? DBNull.Value;
-                        parameters.Add(dbParam);
+                        if (++i >= bulkInsertBatchSize)
+                        {
+                            result += CommitBulk<TEntity>(insertCommand, insertLine, rows, parameters, recordsInInsertBatch, keyMaps);
+                            recordsInInsertBatch.Clear();
+                            i = 0;
+                            rows.Clear();
+                            parameters.Clear();
+                        }
                     }
-                    if (++i >= maxRows)
+
+                    if (recordsInInsertBatch.Count > 0)
                     {
-                        result += CommitBulk(insertCommand, insertLine, rows, parameters);
-                        //recordsInInsertBatch.Clear();
-                        i = 0;
-                        rows.Clear();
-                        parameters.Clear();
+                        result += CommitBulk<TEntity>(insertCommand, insertLine, rows, parameters, recordsInInsertBatch, keyMaps);
+                        recordsInInsertBatch.Clear();
+                    }
+
+                    if (insertTransaction != null && ownTransaction)
+                    {
+                        insertTransaction.Commit();
                     }
                 }
-                if (rows.Length > 0)
-                {
-                    result += CommitBulk(insertCommand, insertLine, rows, parameters);
-                    //recordsInInsertBatch.Clear();
-                }
+
                 return result;
             }
             finally
@@ -732,26 +783,6 @@ namespace EntityFramework.Batch
             return result;
         }
 
-        private static int CommitBulk(DbCommand command, StringBuilder insertLine, StringBuilder rows, List<DbParameter> parameters)
-        {
-            string commandText = insertLine.ToString() + rows.ToString();
-            int parameterCount = 0;
-            if (command.CommandText != commandText)
-            {
-                command.CommandText = commandText;
-                command.Parameters.Clear();
-                command.Parameters.AddRange(parameters.ToArray());
-            }
-            else
-            {
-                parameters.ForEach(x => command.Parameters[parameterCount++].Value = x.Value);
-            }
-
-            return command.ExecuteNonQuery();
-        }
-
-        /*
-        
         private static int CommitBulk<TEntity>(DbCommand command, StringBuilder insertLine, StringBuilder rows, List<DbParameter> parameters, IEnumerable<TEntity> recordsInBatch, List<PropertyMap> keyProperties)
             where TEntity : class
         {
@@ -776,18 +807,45 @@ namespace EntityFramework.Batch
             }
             else
             {
+                List<MethodInfo> keyPropertySetMethodInfoList = new List<MethodInfo>();
+                foreach (PropertyMap prop in keyProperties)
+                {
+                    MethodInfo setMethod = null;
+                    PropertyInfo pinfo = typeof(TEntity).GetProperty(prop.PropertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+                    if (pinfo != null)
+                    {
+                        setMethod = pinfo.GetSetMethod(true);
+                    }
+                    keyPropertySetMethodInfoList.Add(setMethod);
+                }
+
                 DbDataReader reader = command.ExecuteReader();
+                IEnumerator<TEntity> entityEnumerator = recordsInBatch.GetEnumerator();
 
                 if (reader != null)
                 {
                     while (reader.Read())
                     {
-                        count++;
-
-                        // read each key property back onto the object
-                        foreach (PropertyMap prop in keyProperties)
+                        if (!entityEnumerator.MoveNext())
                         {
-                            prop.ColumnName
+                            throw new InvalidOperationException("The number output rows returned from the batch statement exceeeds the number of entity instances");
+                        }
+
+                        count++;
+                        int propIndex = 0;
+                        // read each key property back onto the object
+                        foreach (MethodInfo setMethod in keyPropertySetMethodInfoList)
+                        {
+                            if (setMethod != null)
+                            {
+                                object valueToSet = reader[propIndex];
+                                if (valueToSet is DBNull || valueToSet == DBNull.Value)
+                                {
+                                    valueToSet = null;
+                                }
+                                setMethod.Invoke(entityEnumerator.Current, new object[] { valueToSet });
+                            }
+                            propIndex++;
                         }
                     }
                     reader.Close();
@@ -796,8 +854,6 @@ namespace EntityFramework.Batch
 
             return count;
         }
-
-         */ 
     }
 
     /// <summary>
@@ -819,13 +875,15 @@ namespace EntityFramework.Batch
         };
         private static List<DbTypeMapEntry> dbTypeList = new List<DbTypeMapEntry>();
 
+        
         #region Constructors
         static DbTypeConversion()
         {
             dbTypeList.Add(new DbTypeMapEntry(typeof(bool), DbType.Boolean, SqlDbType.Bit));
             dbTypeList.Add(new DbTypeMapEntry(typeof(byte), DbType.Double, SqlDbType.TinyInt));
             dbTypeList.Add(new DbTypeMapEntry(typeof(byte[]), DbType.Binary, SqlDbType.Image));
-            dbTypeList.Add(new DbTypeMapEntry(typeof(DateTime), DbType.DateTime, SqlDbType.DateTime));
+            dbTypeList.Add(new DbTypeMapEntry(typeof(DateTime), DbType.DateTime, SqlDbType.DateTime2));
+            dbTypeList.Add(new DbTypeMapEntry(typeof(DateTime), DbType.DateTime2, SqlDbType.DateTime2));
             dbTypeList.Add(new DbTypeMapEntry(typeof(Decimal), DbType.Decimal, SqlDbType.Decimal));
             dbTypeList.Add(new DbTypeMapEntry(typeof(double), DbType.Double, SqlDbType.Float));
             dbTypeList.Add(new DbTypeMapEntry(typeof(Guid), DbType.Guid, SqlDbType.UniqueIdentifier));

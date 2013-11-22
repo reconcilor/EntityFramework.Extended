@@ -240,12 +240,13 @@ namespace EntityFramework.Extensions
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="destination">The <see cref="DbSet"/> to insert the records into.</param>
         /// <param name="records">Collection of <typeparamref name="TEntity"/> to be inserted</param>
+        /// <param name="recordsPerInsertBatch">The number of records per insert batch</param>
         /// <returns>The number of row inserted.</returns>
         /// <remarks>
         /// When executing this method, the statement is immediately executed on the database provider
         /// and is not part of the change tracking system.
         /// </remarks>
-        public static int BulkInsert<TEntity>(this DbSet<TEntity> destination, IEnumerable<TEntity> records) where TEntity : class
+        public static int BulkInsert<TEntity>(this DbSet<TEntity> destination, IEnumerable<TEntity> records, int? recordsPerInsertBatch = null) where TEntity : class
         {
             if (destination == null)
                 throw new ArgumentNullException("source");
@@ -265,7 +266,19 @@ namespace EntityFramework.Extensions
                 throw new ArgumentException("Could not load the entity mapping information for the source.", "source");
 
             var runner = ResolveRunner();
-            return runner.BulkInsert(objectContext, entityMap, records);
+
+            int count = 0;
+
+            if (recordsPerInsertBatch == null)
+            {
+                count = runner.BulkInsert(objectContext, entityMap, records);
+            }
+            else
+            {
+                count = runner.BulkInsert(objectContext, entityMap, records, recordsPerInsertBatch.Value);
+            }
+
+            return count;
         }
 
         /// <summary>
