@@ -170,28 +170,35 @@ namespace EntityFramework.Mapping
                     // StorageScalarPropertyMapping
                     dynamic propertyMapProxy = new DynamicProxy(propertyMap);
                     EdmProperty storeProperty = propertyMapProxy.ColumnProperty;
-                    if (!entityMap.PropertyMaps.Any(x => x.PropertyName == storeProperty.Name))
+                    
+                    // if a store property could be determined
+                    if (storeProperty != null)
                     {
-                        PropertyMap map;
-                        EdmProperty modelProperty = propertyMapProxy.EdmProperty;
-                        if (modelProperty == null)
+                        // check if the entitymap already has a representation for this property
+                        if (!entityMap.PropertyMaps.Any(x => x.PropertyName == storeProperty.Name))
                         {
-                            map = new ConstantPropertyMap
+                            // if not, then build and add one now...
+                            PropertyMap map;
+                            EdmProperty modelProperty = propertyMapProxy.EdmProperty;
+                            if (modelProperty == null)
                             {
-                                ColumnName = QuoteIdentifier(storeProperty.Name),
-                                PropertyName = storeProperty.Name,
-                                Value = propertyMapProxy.Value.Wrapped
-                            };
-                        }
-                        else
-                        {
-                            map = new PropertyMap
+                                map = new ConstantPropertyMap
+                                {
+                                    ColumnName = QuoteIdentifier(storeProperty.Name),
+                                    PropertyName = storeProperty.Name,
+                                    Value = propertyMapProxy.Value.Wrapped
+                                };
+                            }
+                            else
                             {
-                                ColumnName = QuoteIdentifier(storeProperty.Name),
-                                PropertyName = modelProperty.Name
-                            };
+                                map = new PropertyMap
+                                {
+                                    ColumnName = QuoteIdentifier(storeProperty.Name),
+                                    PropertyName = modelProperty.Name
+                                };
+                            }
+                            entityMap.PropertyMaps.Add(map);
                         }
-                        entityMap.PropertyMaps.Add(map);
                     }
                 }
             }
