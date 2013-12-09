@@ -44,6 +44,13 @@ namespace EntityFramework.Extensions
 
           // convert dynamic to static type
           objectQuery = objectQueryProxy;
+
+          ////Add Parameters
+          //foreach (var p in dbQueryProxy.Parameters)
+          //{
+          //    objectQuery.Parameters.Add(p);
+          //}
+
           return objectQuery;
       }
 

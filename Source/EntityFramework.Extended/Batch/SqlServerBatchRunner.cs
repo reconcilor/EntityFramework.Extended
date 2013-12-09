@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Data.Entity.Core.EntityClient;
@@ -583,6 +584,12 @@ namespace EntityFramework.Batch
                 insertCommand.CommandText = sqlBuilder.ToString();
 
                 int result = insertCommand.ExecuteNonQuery();
+
+                if (insertTransaction != null && ownTransaction)
+                {
+                    insertTransaction.Commit();
+                }
+
                 return result;
             }
             finally
@@ -673,78 +680,8 @@ namespace EntityFramework.Batch
             objectQuery.EnablePlanCaching = true;
             string select = query.ToTraceString();
 
-            // get private ObjectQueryState ObjectQuery._state;
-            // of actual type internal class
-            //      System.Data.Objects.ELinq.ELinqQueryState
-            object queryState = GetProperty(query, "QueryState", "System.Data.Objects.ELinq.ELinqQueryState");
-
-            // get protected ObjectQueryExecutionPlan ObjectQueryState._cachedPlan;
-            // of actual type internal sealed class
-            //      System.Data.Objects.Internal.ObjectQueryExecutionPlan
-            object plan = GetField(queryState, "_cachedPlan", "System.Data.Objects.Internal.ObjectQueryExecutionPlan");
-
-            // get internal readonly DbCommandDefinition ObjectQueryExecutionPlan.CommandDefinition;
-            // of actual type internal sealed class
-            //      System.Data.EntityClient.EntityCommandDefinition
-            object commandDefinition = GetField(plan, "CommandDefinition", "System.Data.EntityClient.EntityCommandDefinition");
-
-            // get private readonly IColumnMapGenerator EntityCommandDefinition._columnMapGenerator;
-            // of actual type private sealed class
-            //      System.Data.EntityClient.EntityCommandDefinition.ConstantColumnMapGenerator
-            object columnMapGenerator;
-            try
-            {
-                columnMapGenerator = GetField(commandDefinition, "_columnMapGenerator", "System.Data.EntityClient.EntityCommandDefinition+ConstantColumnMapGenerator");
-            }
-            catch (EFChangedException)
-            {
-                columnMapGenerator = GetField(commandDefinition, "_columnMapGenerators", "System.Data.EntityClient.EntityCommandDefinition+ConstantColumnMapGenerator", 0);
-            }
-
-            // get private readonly ColumnMap ConstantColumnMapGenerator._columnMap;
-            // of actual type internal class
-            //      System.Data.Query.InternalTrees.SimpleCollectionColumnMap
-            object columnMap = GetField(columnMapGenerator, "_columnMap", "System.Data.Query.InternalTrees.SimpleCollectionColumnMap");
-
-            // get internal ColumnMap CollectionColumnMap.Element;
-            // of actual type internal class
-            //      System.Data.Query.InternalTrees.RecordColumnMap
-            object columnMapElement = GetProperty(columnMap, "Element", "System.Data.Query.InternalTrees.RecordColumnMap");
-
-            // get internal ColumnMap[] StructuredColumnMap.Properties;
-            // array of internal abstract class
-            //      System.Data.Query.InternalTrees.ColumnMap
-            Array columnMapProperties = GetProperty(columnMapElement, "Properties", "System.Data.Query.InternalTrees.ColumnMap[]") as Array;
-
-            int n = columnMapProperties.Length;
-            var cols = select.Substring(select.IndexOf("SELECT") + 6, select.IndexOf("FROM") - 6)
-                        .Split(new char[] { ',' }, columnMapProperties.Length + 1);
-            StringBuilder innerSelectBuilder = new StringBuilder(select.Length * 2);
-            for (int j = 0; j < n; ++j)
-            {
-                // get value at index j in array
-                // of actual type internal class
-                //      System.Data.Query.InternalTrees.ScalarColumnMap
-                object column = columnMapProperties.GetValue(j);
-                if (column == null || column.GetType().FullName != "System.Data.Query.InternalTrees.ScalarColumnMap") throw new EFChangedException();
-
-                //string colName = (string)GetProp(column, "Name");
-                // can be used for more advanced bingings
-
-                // get internal int ScalarColumnMap.ColumnPos;
-                object columnPositionOfAProperty = GetProperty(column, "ColumnPos", "System.Int32");
-
-                if (innerSelectBuilder.Length > 0)
-                {
-                    innerSelectBuilder.Append(", ");
-                }
-                innerSelectBuilder.Append(cols[(int)columnPositionOfAProperty]);
-            }
-            innerSelectBuilder.Insert(0, "SELECT ");
-            innerSelectBuilder.Append(select.Substring(select.IndexOf("FROM")));
-            string innserSelectSql = innerSelectBuilder.ToString();
-            // create parameters
-            foreach (var objectParameter in objectQuery.Parameters)
+            // create parameters -- parameters are only created in ToTraceString()
+            foreach (var objectParameter in query.Parameters)
             {
                 var parameter = command.CreateParameter();
                 parameter.ParameterName = objectParameter.Name;
@@ -752,6 +689,94 @@ namespace EntityFramework.Batch
 
                 command.Parameters.Add(parameter);
             }
+
+            // get private ObjectQueryState ObjectQuery._state;
+            // of actual type internal class
+            //      System.Data.Objects.ELinq.ELinqQueryState
+            object queryState = GetProperty(query, "QueryState", "System.Data.Entity.Core.Objects.ELinq.ELinqQueryState");
+
+            // get protected ObjectQueryExecutionPlan ObjectQueryState._cachedPlan;
+            // of actual type internal sealed class
+            //      System.Data.Objects.Internal.ObjectQueryExecutionPlan
+            object plan = GetField(queryState, "_cachedPlan", "System.Data.Entity.Core.Objects.Internal.ObjectQueryExecutionPlan");
+
+            // get internal readonly DbCommandDefinition ObjectQueryExecutionPlan.CommandDefinition;
+            // of actual type internal sealed class
+            //      System.Data.EntityClient.EntityCommandDefinition
+            object commandDefinition = GetField(plan, "CommandDefinition", "System.Data.Entity.Core.EntityClient.Internal.EntityCommandDefinition");
+
+            // get private readonly IColumnMapGenerator EntityCommandDefinition._columnMapGenerator;
+            // of actual type private sealed class
+            //      System.Data.EntityClient.EntityCommandDefinition.ConstantColumnMapGenerator
+            object columnMapGenerator;
+            try
+            {
+                columnMapGenerator = GetField(commandDefinition, "_columnMapGenerator", "System.Data.Entity.Core.EntityClient.Internal.EntityCommandDefinition+ConstantColumnMapGenerator");
+            }
+            catch (EFChangedException)
+            {
+                columnMapGenerator = GetField(commandDefinition, "_columnMapGenerators", "System.Data.Entity.Core.EntityClient.Internal.EntityCommandDefinition+ConstantColumnMapGenerator", 0);
+            }
+
+            // get private readonly ColumnMap ConstantColumnMapGenerator._columnMap;
+            // of actual type internal class
+            //      System.Data.Query.InternalTrees.SimpleCollectionColumnMap
+            object columnMap = GetField(columnMapGenerator, "_columnMap", "System.Data.Entity.Core.Query.InternalTrees.SimpleCollectionColumnMap");
+
+            // get internal ColumnMap CollectionColumnMap.Element;
+            // of actual type internal class
+            //      System.Data.Query.InternalTrees.RecordColumnMap
+            object columnMapElement = GetProperty(columnMap, "Element", "System.Data.Entity.Core.Query.InternalTrees.RecordColumnMap");
+
+            // get internal ColumnMap[] StructuredColumnMap.Properties;
+            // array of internal abstract class
+            //      System.Data.Query.InternalTrees.ColumnMap
+            Array columnMapProperties = GetProperty(columnMapElement, "Properties", "System.Data.Entity.Core.Query.InternalTrees.ColumnMap[]") as Array;
+
+            int n = columnMapProperties.Length;
+            
+            //Split between Select and From
+            var cols = 
+                select.Substring(select.IndexOf("SELECT") + 6, select.IndexOf("FROM") - 6)
+                    .Split(new string[] { "]," }, StringSplitOptions.None); //Cant use , because of converts in between
+
+            StringBuilder innerSelectBuilder = new StringBuilder(select.Length * 2);
+
+            //Reorganise select to marry up with values
+            for (int j = 0; j < n; ++j)
+            {
+                // get value at index j in array
+                // of actual type internal class
+                //      System.Data.Query.InternalTrees.ScalarColumnMap
+                object column = columnMapProperties.GetValue(j);
+                if (column == null || column.GetType().FullName != "System.Data.Entity.Core.Query.InternalTrees.ScalarColumnMap") throw new EFChangedException();
+
+                //string colName = (string)GetProp(column, "Name");
+                // can be used for more advanced bingings
+
+                // get internal int ScalarColumnMap.ColumnPos;
+                object columnPositionOfAProperty = GetProperty(column, "ColumnPos", "System.Int32");
+
+                string value = cols[(int)columnPositionOfAProperty];
+
+                //Only add the comma if we have something to add on and theres a field infront
+                if (innerSelectBuilder.Length > 0 && !string.IsNullOrEmpty(value)) 
+                {
+                    innerSelectBuilder.Append(", ");
+                }
+
+                innerSelectBuilder.Append(value);
+
+                //Put closing brace bace on Lost from split
+                if (!value.EndsWith(" ")) //If it was the last one it wont have removed the trailing bracket
+                {
+                    innerSelectBuilder.Append("]"); 
+                }
+            }
+
+            innerSelectBuilder.Insert(0, "SELECT ");
+            innerSelectBuilder.Append(select.Substring(select.IndexOf("FROM")));
+            string innserSelectSql = innerSelectBuilder.ToString();
 
             return innserSelectSql;
         }
@@ -763,8 +788,10 @@ namespace EntityFramework.Batch
 
         static object GetProperty(object obj, string propName, string expectedType)
         {
-            PropertyInfo prop = obj.GetType().GetProperty(propName, BindingFlags.NonPublic | BindingFlags.Instance);
+            PropertyInfo prop = obj.GetType().GetProperty(propName, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
             if (prop == null) throw new EFChangedException();
+
             object value = prop.GetValue(obj, new object[0]);
             if (value == null || value.GetType().FullName != expectedType) throw new EFChangedException();
             return value;
