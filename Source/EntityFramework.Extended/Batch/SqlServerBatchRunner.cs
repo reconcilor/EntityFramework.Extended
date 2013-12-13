@@ -851,31 +851,41 @@ namespace EntityFramework.Batch
 
                 if (reader != null)
                 {
-                    while (reader.Read())
+                    try
                     {
-                        if (!entityEnumerator.MoveNext())
+                        while (reader.Read())
                         {
-                            throw new InvalidOperationException("The number output rows returned from the batch statement exceeeds the number of entity instances");
-                        }
-
-                        count++;
-                        int propIndex = 0;
-                        // read each key property back onto the object
-                        foreach (MethodInfo setMethod in keyPropertySetMethodInfoList)
-                        {
-                            if (setMethod != null)
+                            if (!entityEnumerator.MoveNext())
                             {
-                                object valueToSet = reader[propIndex];
-                                if (valueToSet is DBNull || valueToSet == DBNull.Value)
-                                {
-                                    valueToSet = null;
-                                }
-                                setMethod.Invoke(entityEnumerator.Current, new object[] { valueToSet });
+                                throw new InvalidOperationException("The number output rows returned from the batch statement exceeeds the number of entity instances");
                             }
-                            propIndex++;
+
+                            count++;
+                            int propIndex = 0;
+                            // read each key property back onto the object
+                            foreach (MethodInfo setMethod in keyPropertySetMethodInfoList)
+                            {
+                                if (setMethod != null)
+                                {
+                                    object valueToSet = reader[propIndex];
+                                    if (valueToSet is DBNull || valueToSet == DBNull.Value)
+                                    {
+                                        valueToSet = null;
+                                    }
+                                    setMethod.Invoke(entityEnumerator.Current, new object[] { valueToSet });
+                                }
+                                propIndex++;
+                            }
                         }
                     }
-                    reader.Close();
+                    finally
+                    {
+                        // if the reader is still open... close it..
+                        if (!reader.IsClosed)
+                        {
+                            reader.Close();
+                        }
+                    }
                 }
             }
 
