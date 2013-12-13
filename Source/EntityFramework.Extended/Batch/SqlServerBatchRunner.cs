@@ -846,12 +846,11 @@ namespace EntityFramework.Batch
                     keyPropertySetMethodInfoList.Add(setMethod);
                 }
 
-                DbDataReader reader = command.ExecuteReader();
-                IEnumerator<TEntity> entityEnumerator = recordsInBatch.GetEnumerator();
-
-                if (reader != null)
+                using (DbDataReader reader = command.ExecuteReader())
                 {
-                    try
+                    IEnumerator<TEntity> entityEnumerator = recordsInBatch.GetEnumerator();
+
+                    if (reader != null)
                     {
                         while (reader.Read())
                         {
@@ -876,14 +875,6 @@ namespace EntityFramework.Batch
                                 }
                                 propIndex++;
                             }
-                        }
-                    }
-                    finally
-                    {
-                        // if the reader is still open... close it..
-                        if (!reader.IsClosed)
-                        {
-                            reader.Close();
                         }
                     }
                 }
